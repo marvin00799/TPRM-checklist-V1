@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S3YI Sec &amp; Compliance — TPRM Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--surface:#181c27;--surface2:#1e2333;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --text:#e8eaf2;--muted:#7c8299;
+  --accent:#3ecf8e;--accent-dim:rgba(62,207,142,0.12);--accent-glow:rgba(62,207,142,0.25);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);
+  --blue:#60a5fa;--red:#f87171;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r:12px;--rsm:8px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 80px}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;position:sticky;top:0;z-index:100}
+.topbar-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:36px;height:36px;background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.brand-icon svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.brand-text .org{font-size:10px;color:var(--accent);font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase}
+.brand-text .title{font-size:14px;font-weight:600;letter-spacing:-.2px;line-height:1.2}
+.brand-text .sub{font-size:11px;color:var(--muted);font-family:var(--mono)}
+
+.topbar-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.tab-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:var(--font);font-size:12px;padding:6px 11px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
+.tab-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tab-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.tab-btn:hover:not(.active){color:var(--text)}
+.reset-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:var(--font);font-size:12px;padding:6px 11px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+.reset-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.reset-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* VIEWS */
+.view{display:none}.view.active{display:block}
+
+/* SUPPLIER FIELD */
+.supplier-field{max-width:680px;margin:16px auto 0;padding:0 20px}
+.supplier-input-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.supplier-input-wrap label{font-size:12px;color:var(--muted);white-space:nowrap;font-family:var(--mono)}
+.supplier-input-wrap input{background:transparent;border:none;outline:none;color:var(--text);font-family:var(--font);font-size:13px;font-weight:500;flex:1;min-width:0}
+.supplier-input-wrap input::placeholder{color:var(--muted);font-weight:400}
+
+/* PROGRESS */
+.progress-section{max-width:680px;margin:14px auto 0;padding:0 20px}
+.progress-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px}
+.stat-value{font-size:22px;font-weight:600;font-family:var(--mono);line-height:1;margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--muted)}
+.stat-card.sg .stat-value{color:var(--accent)}
+.stat-card.sb .stat-value{color:var(--blue)}
+.stat-card.sa .stat-value{color:var(--amber)}
+.bar-wrap{background:var(--surface2);border-radius:99px;height:5px;overflow:hidden;margin-bottom:6px}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#60efbc);transition:width .4s cubic-bezier(.4,0,.2,1);width:0%}
+.bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--mono)}
+.complete-banner{background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:var(--rsm);padding:12px 16px;margin-top:14px;font-size:13px;color:var(--accent);display:none;align-items:center;gap:8px}
+.complete-banner svg{width:16px;height:16px;stroke:var(--accent);fill:none;flex-shrink:0;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* PHASES */
+.phases{max-width:680px;margin:14px auto 0;padding:0 20px;display:flex;flex-direction:column;gap:8px}
+.phase{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.phase:hover{border-color:var(--border2)}
+.phase.all-done{border-color:rgba(62,207,142,.22)}
+.phase-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;transition:background .15s}
+.phase-header:hover{background:var(--surface2)}
+.phase-num{font-family:var(--mono);font-size:11px;color:var(--muted);width:20px;flex-shrink:0}
+.phase-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:background .3s}
+.phase.all-done .phase-dot{background:var(--accent);box-shadow:0 0 6px var(--accent-glow)}
+.phase.in-progress .phase-dot{background:var(--amber)}
+.phase-name{flex:1;font-size:14px;font-weight:500;min-width:0}
+.phase-count{font-size:11px;font-family:var(--mono);padding:3px 8px;border-radius:5px;background:var(--surface2);color:var(--muted);flex-shrink:0}
+.phase.all-done .phase-count{background:var(--accent-dim);color:var(--accent)}
+.phase.in-progress .phase-count{background:var(--amber-dim);color:var(--amber)}
+.chevron{width:16px;height:16px;stroke:var(--muted);fill:none;flex-shrink:0;transition:transform .2s;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.phase-header.open .chevron{transform:rotate(180deg)}
+.phase-items{display:none;border-top:1px solid var(--border);padding:8px 16px 12px}
+.phase-items.open{display:block}
+.item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.item:last-child{border-bottom:none}
+.item input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:17px;height:17px;border:1.5px solid var(--border2);border-radius:5px;background:transparent;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative}
+.item input[type="checkbox"]:hover{border-color:var(--accent)}
+.item input[type="checkbox"]:checked{background:var(--accent);border-color:var(--accent)}
+.item input[type="checkbox"]:checked::after{content:'';display:block;width:4px;height:7px;border:1.5px solid #0f1117;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px);position:absolute}
+.item label{font-size:13px;line-height:1.55;color:var(--text);cursor:pointer;transition:color .2s}
+.item.done label{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(124,130,153,.5)}
+
+/* GUIDE VIEW */
+.ref-wrap{max-width:680px;margin:20px auto 0;padding:0 20px}
+.ref-intro{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:14px}
+.ref-intro .ri-title{font-size:14px;font-weight:600;margin-bottom:6px}
+.ref-intro p{font-size:13px;color:var(--muted);line-height:1.7}
+.ref-intro strong{color:var(--text);font-weight:500}
+
+.ref-phase{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.ref-phase-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;transition:background .15s}
+.ref-phase-header:hover{background:var(--surface2)}
+.ref-emoji{font-size:18px;flex-shrink:0;width:26px;text-align:center}
+.ref-phase-title{flex:1;font-size:14px;font-weight:500}
+.ref-chevron{width:16px;height:16px;stroke:var(--muted);fill:none;flex-shrink:0;transition:transform .2s;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ref-phase-header.open .ref-chevron{transform:rotate(180deg)}
+.ref-body{display:none;border-top:1px solid var(--border);padding:14px 18px 16px}
+.ref-body.open{display:block}
+.ref-note{font-size:12px;color:var(--accent);font-family:var(--mono);background:var(--accent-dim);border-radius:5px;padding:6px 10px;margin-bottom:12px;line-height:1.5}
+.ref-intro-text{font-size:12px;color:var(--muted);margin-bottom:10px;font-style:italic;line-height:1.6}
+.ref-body ul{list-style:none;padding:0}
+.ref-body ul li{font-size:13px;color:var(--text);line-height:1.6;padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
+.ref-body ul li:last-child{border-bottom:none}
+.ref-body ul li::before{content:'–';color:var(--muted);flex-shrink:0;margin-top:1px}
+
+.version-tag{text-align:center;font-size:11px;color:var(--muted);font-family:var(--mono);padding:24px 0 8px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="org">S3YI Sec &amp; Compliance · WM v2</div>
+        <div class="title">TPRM Checklist</div>
+        <div class="sub">Supplier security assurance</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="tab-btn active" id="btn-checklist" onclick="switchView('checklist')">
+        <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Checklist
+      </button>
+      <button class="tab-btn" id="btn-guide" onclick="switchView('guide')">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Guide
+      </button>
+      <button class="reset-btn" onclick="resetAll()">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST VIEW -->
+<div class="view active" id="view-checklist">
+  <div class="supplier-field">
+    <div class="supplier-input-wrap">
+      <label for="supplier-name">Supplier</label>
+      <input type="text" id="supplier-name" placeholder="Enter supplier name..." oninput="saveSupplier(this.value)">
+    </div>
+  </div>
+  <div class="progress-section">
+    <div class="progress-stats">
+      <div class="stat-card sg"><div class="stat-value" id="stat-done">0</div><div class="stat-label">Tasks done</div></div>
+      <div class="stat-card sb"><div class="stat-value" id="stat-remain">0</div><div class="stat-label">Remaining</div></div>
+      <div class="stat-card sa"><div class="stat-value" id="stat-pct">0%</div><div class="stat-label">Complete</div></div>
+    </div>
+    <div class="bar-wrap"><div class="bar-fill" id="bar"></div></div>
+    <div class="bar-label"><span>Progress</span><span id="bar-label-right">0 / 0 tasks</span></div>
+    <div class="complete-banner" id="banner">
+      <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      All phases complete — supplier cleared for onboarding!
+    </div>
+  </div>
+  <div class="phases" id="phases"></div>
+</div>
+
+<!-- GUIDE VIEW -->
+<div class="view" id="view-guide">
+  <div class="ref-wrap">
+    <div class="ref-intro">
+      <div class="ri-title">Supplier Security Assurance — Learning Guide</div>
+      <p>End-to-end process reference for third-party risk assessments. Use this alongside the <strong>Checklist</strong> tab to understand the <em>why</em> behind each step. Based on the onboarding of Karen's benefit provider as a worked example.</p>
+    </div>
+    <div id="ref-phases"></div>
+    <div class="version-tag">S3YI Sec &amp; Compliance · WM v2 · TPRM Checklist</div>
+  </div>
+</div>
+
+<script>
+const PHASES = [
+  {
+    id:'p1',emoji:'🔍',title:'Step 1 — Intake & scoping',
+    note:'A benefit provider handles employee PII/financial data — likely Tier 1 or 2.',
+    intro:null,
+    guide:[
+      'Collect basic supplier info: company name, service description, contract value',
+      'Classify the supplier tier based on data access & criticality (Tier 1 = high risk, Tier 3 = low risk)',
+      'A benefit provider likely handles employee PII/financial data — probably Tier 1 or 2',
+      'Log supplier in third-party inventory or GRC tool'
+    ],
+    items:[
+      'Collect supplier name, service description and contract value',
+      'Identify what data the supplier will access (PII, financial, etc.)',
+      'Classify supplier tier — Tier 1 = high risk, Tier 3 = low risk',
+      'Confirm benefit provider is likely Tier 1 or 2 due to employee data',
+      'Log supplier in third-party inventory or GRC tool'
+    ]
+  },
+  {
+    id:'p2',emoji:'📋',title:'Step 2 — Send security questionnaire',
+    note:'Common questionnaires: SIG Lite, CAIQ, or your internal version.',
+    intro:'Covers: data handling, access controls, encryption, incident response, subprocessors.',
+    guide:[
+      'Issue a standard questionnaire — SIG Lite, CAIQ, or your internal version',
+      'Covers: data handling, access controls, encryption, incident response, subprocessors',
+      'Set a response deadline — typically 10–15 business days'
+    ],
+    items:[
+      'Select appropriate questionnaire (SIG Lite, CAIQ or internal)',
+      'Identify and contact the supplier\'s security contact',
+      'Send questionnaire with a clear response deadline (10–15 business days)',
+      'Follow up if no response received by day 10'
+    ]
+  },
+  {
+    id:'p3',emoji:'📄',title:'Step 3 — Review documentation',
+    note:'Request and review all four document types listed below.',
+    intro:null,
+    guide:[
+      'ISO 27001 / SOC 2 Type II certificate',
+      'Penetration test summary (last 12 months)',
+      'Privacy policy & Data Processing Agreement (DPA)',
+      'Business Continuity / Disaster Recovery plan'
+    ],
+    items:[
+      'ISO 27001 or SOC 2 Type II certificate received and valid',
+      'Penetration test summary received (within last 12 months)',
+      'Privacy policy reviewed',
+      'Data Processing Agreement (DPA) received',
+      'Business continuity and disaster recovery plan received'
+    ]
+  },
+  {
+    id:'p4',emoji:'🔎',title:'Step 4 — Assess the responses',
+    note:'Use a risk register to log identified risks with likelihood & impact ratings.',
+    intro:null,
+    guide:[
+      'Score/rate each domain — access control, encryption, incident response, etc.',
+      'Flag gaps or red findings',
+      'Use a risk register to log identified risks with likelihood & impact ratings'
+    ],
+    items:[
+      'Score each security domain (access control, encryption, incident response, etc.)',
+      'Identify and flag any critical or high-risk gaps',
+      'Log all findings in risk register with likelihood and impact ratings',
+      'Produce assessment summary report'
+    ]
+  },
+  {
+    id:'p5',emoji:'🤝',title:'Step 5 — Remediation & negotiation',
+    note:'Get written confirmation of fixes, or accept residual risk with CISO sign-off.',
+    intro:null,
+    guide:[
+      'Share findings with the supplier',
+      'Agree remediation timelines for any critical/high gaps',
+      'Get written confirmation of fixes or accept residual risk with sign-off from your manager/CISO'
+    ],
+    items:[
+      'Share findings report with supplier',
+      'Agree remediation timelines for all critical and high gaps',
+      'Obtain written confirmation of completed fixes',
+      'Document any residual risks accepted with justification'
+    ]
+  },
+  {
+    id:'p6',emoji:'✅',title:'Step 6 — Risk acceptance & sign-off',
+    note:'Get formal approval from data owner (Karen\'s manager) and security lead (Gary).',
+    intro:null,
+    guide:[
+      'Document the final risk rating: Low / Medium / High',
+      'Get formal approval from the data owner (Karen\'s manager) and security lead (Gary)',
+      'Record decision in your GRC tool or risk register'
+    ],
+    items:[
+      'Assign final risk rating (Low / Medium / High)',
+      'Obtain approval from data owner (business requestor\'s manager)',
+      'Obtain sign-off from security lead',
+      'Record final decision in GRC tool or risk register'
+    ]
+  },
+  {
+    id:'p7',emoji:'📝',title:'Step 7 — Contract & DPA review',
+    note:'Critical — this supplier handles employee data. Legal sign-off on DPA is essential.',
+    intro:null,
+    guide:[
+      'Ensure security clauses are in the contract: right to audit, breach notification SLAs, data deletion',
+      'Legal/procurement signs off on the DPA — critical since this supplier handles employee data'
+    ],
+    items:[
+      'Right-to-audit clause included in contract',
+      'Breach notification SLA confirmed in contract',
+      'Data deletion obligations confirmed in contract',
+      'DPA signed by supplier',
+      'Legal and procurement sign-off obtained'
+    ]
+  },
+  {
+    id:'p8',emoji:'🚀',title:'Step 8 — Onboard & monitor',
+    note:'Reassessment is typically annual for Tier 1 suppliers.',
+    intro:null,
+    guide:[
+      'Add supplier to your third-party inventory',
+      'Set a reassessment date — typically annually for Tier 1',
+      'Monitor for news of breaches, cert expiry, or significant changes'
+    ],
+    items:[
+      'Supplier added to third-party inventory with tier classification',
+      'Reassessment date set (annually for Tier 1)',
+      'Alerts configured for supplier breach or security news',
+      'Certificate expiry dates logged for renewal reminders',
+      'Supplier formally notified of onboarding completion'
+    ]
+  }
+];
+
+const KEY = 'tprm_v3';
+let state = {};
+
+function load() {
+  try { const r = localStorage.getItem(KEY); if (r) state = JSON.parse(r); } catch {}
+  const inp = document.getElementById('supplier-name');
+  if (inp && state.supplier) inp.value = state.supplier;
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }
+function saveSupplier(v) { state.supplier = v; save(); }
+
+function switchView(v) {
+  document.getElementById('view-checklist').classList.toggle('active', v==='checklist');
+  document.getElementById('view-guide').classList.toggle('active', v==='guide');
+  document.getElementById('btn-checklist').classList.toggle('active', v==='checklist');
+  document.getElementById('btn-guide').classList.toggle('active', v==='guide');
+}
+
+function getStats(p) {
+  const total = p.items.length;
+  const done = p.items.filter((_,i) => state[p.id+'_'+i]).length;
+  return { done, total };
+}
+
+function updateProgress() {
+  let total=0, done=0;
+  PHASES.forEach(p => { const s=getStats(p); total+=s.total; done+=s.done; });
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-remain').textContent = total-done;
+  document.getElementById('stat-pct').textContent = pct+'%';
+  document.getElementById('bar').style.width = pct+'%';
+  document.getElementById('bar-label-right').textContent = done+' / '+total+' tasks';
+  document.getElementById('banner').style.display = (done===total && total>0)?'flex':'none';
+  PHASES.forEach(p => {
+    const s=getStats(p);
+    const el=document.getElementById('phase_'+p.id);
+    if(!el) return;
+    el.classList.toggle('all-done', s.done===s.total);
+    el.classList.toggle('in-progress', s.done>0 && s.done<s.total);
+    const cnt=document.getElementById('count_'+p.id);
+    if(cnt) cnt.textContent=s.done+'/'+s.total;
+  });
+}
+
+function togglePhase(id) {
+  const items=document.getElementById('items_'+id);
+  const hdr=document.getElementById('hdr_'+id);
+  hdr.classList.toggle('open', items.classList.toggle('open'));
+}
+
+function toggle(key) {
+  const cb=document.getElementById('cb_'+key);
+  state[key]=cb.checked;
+  document.getElementById('item_'+key).classList.toggle('done', cb.checked);
+  save(); updateProgress();
+}
+
+function resetAll() {
+  if (!confirm('Reset all checkboxes? This cannot be undone.')) return;
+  const supplier=state.supplier||'';
+  state={supplier}; save();
+  document.querySelectorAll('input[type=checkbox]').forEach(c=>{c.checked=false;});
+  document.querySelectorAll('.item').forEach(el=>el.classList.remove('done'));
+  updateProgress();
+}
+
+function toggleRef(id) {
+  const body=document.getElementById('ref-body-'+id);
+  const hdr=document.getElementById('ref-hdr-'+id);
+  hdr.classList.toggle('open', body.classList.toggle('open'));
+}
+
+function renderChecklist() {
+  const container=document.getElementById('phases');
+  PHASES.forEach((p,idx) => {
+    const div=document.createElement('div');
+    div.className='phase'; div.id='phase_'+p.id;
+    const itemsHtml=p.items.map((item,i) => {
+      const key=p.id+'_'+i, checked=!!state[key];
+      return `<div class="item${checked?' done':''}" id="item_${key}">
+        <input type="checkbox" id="cb_${key}" ${checked?'checked':''} onchange="toggle('${key}')">
+        <label for="cb_${key}">${item}</label></div>`;
+    }).join('');
+    div.innerHTML=`
+      <div class="phase-header" id="hdr_${p.id}" onclick="togglePhase('${p.id}')">
+        <span class="phase-num">0${idx+1}</span>
+        <div class="phase-dot"></div>
+        <span class="phase-name">${p.title}</span>
+        <span class="phase-count" id="count_${p.id}">0/${p.items.length}</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="phase-items" id="items_${p.id}">${itemsHtml}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function renderGuide() {
+  const container=document.getElementById('ref-phases');
+  PHASES.forEach(p => {
+    const div=document.createElement('div');
+    div.className='ref-phase';
+    const noteHtml=p.note?`<div class="ref-note">${p.note}</div>`:'';
+    const introHtml=p.intro?`<p class="ref-intro-text">${p.intro}</p>`:'';
+    const listHtml=p.guide.map(g=>`<li><span>${g}</span></li>`).join('');
+    div.innerHTML=`
+      <div class="ref-phase-header" id="ref-hdr-${p.id}" onclick="toggleRef('${p.id}')">
+        <span class="ref-emoji">${p.emoji}</span>
+        <span class="ref-phase-title">${p.title}</span>
+        <svg class="ref-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="ref-body" id="ref-body-${p.id}">
+        ${noteHtml}${introHtml}<ul>${listHtml}</ul>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+load(); renderChecklist(); renderGuide(); updateProgress();
+</script>
+</body>
+</html>
